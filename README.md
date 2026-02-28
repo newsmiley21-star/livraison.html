@@ -170,11 +170,18 @@
 
             try {
                 const nouvelleRef = push(ref(db, 'missions'));
+                // Assurer la compatibilité avec l'app comptable en envoyant des nombres et les bons noms de champs
                 await set(nouvelleRef, {
                     id: "CT" + Date.now().toString().slice(-4),
-                    nom: n, tel: t, lieu: l, retrait: m,
-                    comLivreur: 800, profitAdmin: 390,
-                    etape: 1, livreur: "En attente", 
+                    nom: n, 
+                    tel: t, 
+                    lieu: l, 
+                    retrait: Number(m),
+                    frais: 1190,
+                    comLivreur: 800, 
+                    profitAdmin: 390,
+                    etape: 1, 
+                    livreur: "En attente", 
                     date: new Date().toLocaleDateString('fr-FR'),
                     timestamp: Date.now(),
                     source: "Web Client"
@@ -194,7 +201,6 @@
         onValue(ref(db, 'missions'), (snapshot) => {
             const data = snapshot.val();
             toutesMissions = data ? Object.values(data) : [];
-            // Si on est sur le suivi, rafraîchir la vue
             if(!document.getElementById('sec-suivi').classList.contains('hidden')) {
                 rechercherCommande();
             }
@@ -216,7 +222,6 @@
                 return;
             }
 
-            // On prend la plus récente
             const m = mesCommandes.sort((a,b) => b.timestamp - a.timestamp)[0];
             
             let badge = "bg-yellow-400 text-yellow-900";
@@ -260,7 +265,6 @@
 
             const coords = gpsStr.split(',').map(c => parseFloat(c));
             
-            // Attendre que le div soit visible pour initialiser
             setTimeout(() => {
                 if (!mapInstance) {
                     mapInstance = L.map('map', { zoomControl: false }).setView(coords, 16);
